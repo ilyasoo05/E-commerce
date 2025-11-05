@@ -1,0 +1,275 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Clients{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .clients-container {
+        max-width: 1500px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .clients-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        font-size: 2rem;
+        color: #1f2540;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid rgba(236, 106, 0, 0.79);
+    }
+
+    .clients-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: rgba(236, 106, 0, 0.79);
+    }
+
+    .clients-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .clients-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .home-btn {
+        padding: 0.8rem 1.2rem;
+        background-color: #1f2540;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .home-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background-color: #2a3456;
+    }
+
+    .search-input {
+        padding: 0.8rem 1.2rem;
+        width: 300px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: rgba(236, 106, 0, 0.5);
+        box-shadow: 0 0 0 3px rgba(236, 106, 0, 0.1);
+    }
+
+    .clients-table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .clients-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 800px;
+    }
+
+    .clients-table th {
+        background-color: #1f2540;
+        color: white;
+        text-align: left;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        position: relative;
+    }
+
+    .clients-table th:first-child {
+        border-top-left-radius: 8px;
+    }
+
+    .clients-table th:last-child {
+        border-top-right-radius: 8px;
+    }
+
+    .clients-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .clients-table tbody tr:nth-child(odd) {
+        background-color: #f8fafc;
+    }
+
+    .clients-table tbody tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+
+    .clients-table tbody tr:hover {
+        background-color: rgba(236, 106, 0, 0.05);
+    }
+
+    .clients-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1f2540;
+    }
+
+    .empty-message {
+        padding: 3rem;
+        text-align: center;
+        color: #64748b;
+        font-size: 1.1rem;
+        background-color: #f8fafc;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .empty-message-icon {
+        display: block;
+        margin: 0 auto 1rem auto;
+        color: rgba(236, 106, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        .clients-container {
+            padding: 0 1rem;
+            margin: 1.5rem auto;
+        }
+
+        .clients-title {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .clients-card {
+            padding: 1.5rem;
+        }
+
+        .clients-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .search-input {
+            width: 100%;
+        }
+
+        .clients-table th,
+        .clients-table td {
+            padding: 0.8rem 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .clients-container {
+            padding: 0 0.8rem;
+            margin: 1rem auto;
+        }
+
+        .clients-title {
+            font-size: 1.4rem;
+        }
+
+        .clients-card {
+            padding: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="clients-container">
+    <h1 class="clients-title">Clients Managements</h1>
+    
+    <div class="clients-card">
+        <div class="clients-header">
+            <a href="{{ path('admin_dashboard') }}" class="home-btn">
+                <i class="fas fa-home"></i>
+            </a>
+            <input id="searchInput" type="text" placeholder="Search clients..." class="search-input">
+        </div>
+        
+        <div class="clients-table-wrapper">
+            <table id="clientsTable" class="clients-table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Phone Number</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr>
+                            <td>{{ client.id }}</td>
+                            <td>{{ client.email }}</td>
+                            <td>{{ client.profile.firstName ?? '-' }}</td>
+                            <td>{{ client.profile.lastName ?? '-' }}</td>
+                            <td>{{ client.profile.phoneNumber ?? '-' }}</td>
+                            <td>{{ client.profile.country ?? '-' }}</td>
+                            <td>{{ client.profile.city ?? '-' }}</td>
+                            <td>{{ client.profile.address ?? '-' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-message">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="empty-message-icon">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                No clients found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let searchTerm = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#clientsTable tbody tr');
+
+        rows.forEach(function (row) {
+            let rowText = row.textContent.toLowerCase();
+            if (rowText.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

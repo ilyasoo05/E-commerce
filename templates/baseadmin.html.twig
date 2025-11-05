@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+    {% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: rgba(236, 106, 0, 0.89);
+            --text-dark: #1f2540;
+            --white: #ffffff;
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --border-radius: 10px;
+            --transition: all 0.3s ease;
+        }
+
+        html, body {
+            font-family: 'Inter', 'Segoe UI', Roboto, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--white);
+            color: var(--text-dark);
+        }
+
+        nav {
+            background-color: var(--white);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        nav img {
+            width: 60px;
+            height: auto;
+            transition: var(--transition);
+            margin-right: auto;
+        }
+
+        nav img:hover {
+            transform: scale(1.05);
+        }
+
+        .logout-btn {
+            color: #ff5252;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            margin-left: 1700px;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 82, 82, 0.1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.8rem 1rem;
+            }
+            
+            nav img {
+                width: 60px;
+            }
+            
+            .logout-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+    {% endblock %}
+</head>
+
+<body>
+    <nav>
+        <a href="{{ path('admin_dashboard') }}">
+            <img src="{{ asset('images/Logo.png') }}" alt="Logo">
+        </a>
+
+        <form action="{{ path('app_logout') }}" method="post">
+            <button type="submit" class="logout-btn" title="Logout">
+                <i class="fas fa-door-open"></i>
+            </button>
+        </form>
+    </nav>
+
+    {% block body %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,385 @@
+{% extends 'baseclient.html.twig' %}
+
+{% block body %}
+<div class="products-wrapper">
+    <div class="products-container">
+        <h1 class="products-title">Recommended Products</h1>
+
+        <div class="products-grid">
+            {% for product in recommendedProducts %}
+                <div class="product-card" data-product-id="{{ product.id }}">
+                    <!-- Info button top-right corner -->
+                    <button class="info-btn" title="Toggle Info">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                    </button>
+
+                    <div class="normal-view">
+                        <div class="product-image-container">
+                            <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.name }}" class="product-image">
+                        </div>
+                        <div class="product-content">
+                            <h3 class="product-name">{{ product.name }}</h3>
+                            <div class="product-footer">
+                                <p class="product-price">{{ product.price }} DH</p>
+                                <button
+                                    class="add-to-cart-btn"
+                                    data-id="{{ product.id }}"
+                                    data-name="{{ product.name }}"
+                                    data-price="{{ product.price }}"
+                                    data-image="{{ product.image }}"
+                                    title="Add to Cart">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-icon"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-view" style="display:none;">
+                        <p class="info-description">{{ product.description }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="no-products">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <p>No recommended products available.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.add-to-cart-btn');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const product = {
+                id: button.dataset.id,
+                name: button.dataset.name,
+                price: parseFloat(button.dataset.price),
+                image: button.dataset.image,
+                quantity: 1
+            };
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const existing = cart.find(item => item.id === product.id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push(product);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            const icon = button.querySelector('.cart-icon');
+            icon.classList.add('cart-bounce');
+            setTimeout(() => icon.classList.remove('cart-bounce'), 300);
+
+            showAddedNotification(product.name);
+
+            if (typeof window.refreshCartCount === 'function') {
+                window.refreshCartCount();
+            }
+        });
+    });
+
+    const infoButtons = document.querySelectorAll('.info-btn');
+
+    infoButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const productCard = btn.closest('.product-card');
+            if (!productCard) return;
+
+            const normalView = productCard.querySelector('.normal-view');
+            const infoView = productCard.querySelector('.info-view');
+
+            const isInfoVisible = infoView.style.display === 'block';
+
+            if (isInfoVisible) {
+                // Show normal view, hide info view
+                infoView.style.display = 'none';
+                normalView.style.display = 'flex'; // keep flex layout
+                productCard.classList.remove('info-active');
+            } else {
+                // Show info view, hide normal view
+                infoView.style.display = 'block';
+                normalView.style.display = 'none';
+                productCard.classList.add('info-active');
+            }
+        });
+    });
+
+    function showAddedNotification(productName) {
+        const notification = document.createElement('div');
+        notification.className = 'cart-notification';
+        notification.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>${productName} added to cart</span>
+        `;
+
+        document.body.appendChild(notification);
+        setTimeout(() => notification.classList.add('show'), 10);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
+
+<style>
+.products-wrapper {
+    max-width: 1800px;
+    margin: 0.5rem auto;
+    padding: 0 1.5rem;
+}
+
+.products-container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 2.5rem;
+    transition: all 0.3s ease;
+}
+
+.products-title {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 2rem;
+    color: #1f2540;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid rgba(236, 106, 0, 0.79);
+}
+
+.products-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: rgba(236, 106, 0, 0.79);
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2rem;
+}
+
+.product-card {
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative; /* for absolute info-btn */
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Normal view layout */
+.normal-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-image-container {
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f2540;
+    margin: 0 0 0.8rem 0;
+    line-height: 1.4;
+    text-align: center;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.product-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: rgba(236, 106, 0, 0.89);
+    margin: 0;
+}
+
+.add-to-cart-btn {
+    background: rgba(236, 106, 0, 0.1);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(236, 106, 0, 0.9);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 0;
+    position: relative;
+}
+
+.add-to-cart-btn:hover {
+    background: rgba(236, 106, 0, 0.9);
+    color: white;
+}
+
+.cart-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.cart-bounce {
+    animation: bounce 0.3s ease forwards;
+}
+
+@keyframes bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Info button positioned top-right inside product card */
+.info-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(236, 106, 0, 0.1);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: rgba(236, 106, 0, 0.9);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    z-index: 10;
+}
+
+.info-btn:hover {
+    background: rgba(236, 106, 0, 0.9);
+    color: white;
+}
+
+/* Info view style */
+.info-view {
+    background-color: rgba(236, 106, 0, 0.9);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.info-view .info-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.info-view .info-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Notification style */
+.cart-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(236, 106, 0, 0.95);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 12px rgba(236, 106, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+}
+
+.cart-notification.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.cart-notification svg {
+    stroke: white;
+}
+
+/* Responsive */
+@media screen and (max-width: 1200px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

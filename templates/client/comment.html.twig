@@ -1,0 +1,289 @@
+{% extends 'baseclient.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .comments-container {
+        max-width: 1100px;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .comments-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        font-size: 2rem;
+        color: #1f2540;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid rgba(236, 106, 0, 0.79);
+    }
+
+    .comments-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: rgba(236, 106, 0, 0.79);
+    }
+
+    .comment-form-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        transition: all 0.3s ease;
+        margin-bottom: 2.5rem;
+    }
+
+    .form-title {
+        font-size: 1.4rem;
+        color: #1f2540;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-title i {
+        color: rgba(236, 106, 0, 0.89);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #1f2540;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #1f2540;
+        background-color: #f8fafc;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: rgba(236, 106, 0, 0.5);
+        box-shadow: 0 0 0 3px rgba(236, 106, 0, 0.1);
+        background-color: #fff;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .btn-submit {
+        padding: 0.8rem 2rem;
+        background: linear-gradient(135deg, rgba(236, 106, 0, 0.89) 0%, rgba(255, 140, 0, 0.9) 100%);
+        border: none;
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 10px rgba(236, 106, 0, 0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, rgba(255, 140, 0, 0.9) 0%, rgba(236, 106, 0, 0.89) 100%);
+        box-shadow: 0 6px 15px rgba(236, 106, 0, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .btn-submit:active {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(236, 106, 0, 0.3);
+    }
+
+    .comments-list-title {
+        font-size: 1.4rem;
+        color: #1f2540;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .comments-list-title i {
+        color: rgba(236, 106, 0, 0.89);
+    }
+
+    .comment-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        border-left: 3px solid #e2e8f0;
+    }
+
+    .comment-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-left: 3px solid rgba(236, 106, 0, 0.79);
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        color: #1f2540;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .comment-author i {
+        color: rgba(236, 106, 0, 0.79);
+        font-size: 1rem;
+    }
+
+    .comment-date {
+        font-size: 0.85rem;
+        color: #718096;
+    }
+
+    .comment-content {
+        color: #4a5568;
+        line-height: 1.6;
+    }
+
+    .empty-comments {
+        padding: 3rem;
+        text-align: center;
+        color: #64748b;
+        font-size: 1.1rem;
+        background-color: #f8fafc;
+        border-radius: 12px;
+        margin-top: 1rem;
+    }
+
+    .empty-comments-icon {
+        display: block;
+        margin: 0 auto 1rem auto;
+        color: rgba(236, 106, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        .comments-container {
+            padding: 0 1rem;
+            margin: 1.5rem auto;
+        }
+
+        .comments-title {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .comment-form-card, .comment-card {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .comments-container {
+            padding: 0 0.8rem;
+            margin: 1rem auto;
+        }
+
+        .comments-title {
+            font-size: 1.4rem;
+        }
+
+        .comment-form-card, .comment-card {
+            padding: 1.2rem;
+        }
+
+        .form-title, .comments-list-title {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="comments-container">
+    <h1 class="comments-title">Community Discussion</h1>
+    
+    <div class="comment-form-card">
+        <h2 class="form-title">
+            <i class="fas fa-comment-dots"></i> Share Your Thoughts
+        </h2>
+        
+        {{ form_start(form, {'attr': {'class': 'comment-form'}}) }}
+            <div class="form-group">
+                {{ form_label(form.content, 'Your Comment') }}
+                {{ form_widget(form.content, {'attr': {'class': 'form-control', 'placeholder': 'Type your comment here...'}}) }}
+                {{ form_errors(form.content) }}
+            </div>
+            
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Submit Comment
+            </button>
+        {{ form_end(form) }}
+    </div>
+    
+    <h3 class="comments-list-title">
+        <i class="fas fa-comments"></i> Recent Comments
+    </h3>
+    
+    {% if comments|length > 0 %}
+        {% for comment in comments %}
+            <div class="comment-card">
+                <div class="comment-header">
+                    <div class="comment-author">
+                        <i class="fas fa-user-circle"></i>
+                        {{ comment.user.email }}
+                    </div>
+                    {% if comment.createdAt is defined %}
+                        <div class="comment-date">
+                            {{ comment.createdAt|date('M d, Y H:i') }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="comment-content">
+                    {{ comment.content }}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-comments">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="empty-comments-icon">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <p>No comments yet. Be the first to share your thoughts!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

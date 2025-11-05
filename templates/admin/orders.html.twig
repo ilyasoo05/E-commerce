@@ -1,0 +1,320 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block title %}Orders Management{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .orders-container {
+        max-width: 1500px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .orders-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        font-size: 2rem;
+        color: #1f2540;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid rgba(236, 106, 0, 0.79);
+    }
+
+    .orders-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: rgba(236, 106, 0, 0.79);
+    }
+
+    .orders-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .orders-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .home-btn {
+        padding: 0.8rem 1.2rem;
+        background-color: #1f2540;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .home-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        background-color: #2a3456;
+    }
+
+    .search-input {
+        padding: 0.8rem 1.2rem;
+        width: 300px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: rgba(236, 106, 0, 0.5);
+        box-shadow: 0 0 0 3px rgba(236, 106, 0, 0.1);
+    }
+
+    .orders-table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 800px;
+    }
+
+    .orders-table th {
+        background-color: #1f2540;
+        color: white;
+        text-align: left;
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        position: relative;
+    }
+
+    .orders-table th:first-child {
+        border-top-left-radius: 8px;
+    }
+
+    .orders-table th:last-child {
+        border-top-right-radius: 8px;
+    }
+
+    .orders-table tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .orders-table tbody tr:nth-child(odd) {
+        background-color: #f8fafc;
+    }
+
+    .orders-table tbody tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+
+    .orders-table tbody tr:hover {
+        background-color: rgba(236, 106, 0, 0.05);
+    }
+
+    .orders-table td {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1f2540;
+    }
+
+    .empty-message {
+        padding: 3rem;
+        text-align: center;
+        color: #64748b;
+        font-size: 1.1rem;
+        background-color: #f8fafc;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .empty-message-icon {
+        display: block;
+        margin: 0 auto 1rem auto;
+        color: rgba(236, 106, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        .orders-container {
+            padding: 0 1rem;
+            margin: 1.5rem auto;
+        }
+
+        .orders-title {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .orders-card {
+            padding: 1.5rem;
+        }
+
+        .orders-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .search-input {
+            width: 100%;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 0.8rem 1rem;
+        }
+        
+        .orders-table, .orders-table thead, .orders-table tbody, .orders-table th, .orders-table td, .orders-table tr {
+            display: block;
+        }
+
+        .orders-table thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        .orders-table tr {
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .orders-table td {
+            position: relative;
+            padding-left: 50%;
+            text-align: right;
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .orders-table td:last-child {
+            border-bottom: none;
+        }
+
+        .orders-table td:before {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 45%;
+            white-space: nowrap;
+            font-weight: 600;
+            color: #1f2540;
+        }
+
+        .orders-table td:nth-of-type(1):before { content: "ID"; }
+        .orders-table td:nth-of-type(2):before { content: "Full Name"; }
+        .orders-table td:nth-of-type(3):before { content: "Email"; }
+        .orders-table td:nth-of-type(4):before { content: "Phone Number"; }
+        .orders-table td:nth-of-type(5):before { content: "Address"; }
+        .orders-table td:nth-of-type(6):before { content: "City"; }
+        .orders-table td:nth-of-type(7):before { content: "Postal Code"; }
+    }
+
+    @media (max-width: 480px) {
+        .orders-container {
+            padding: 0 0.8rem;
+            margin: 1rem auto;
+        }
+
+        .orders-title {
+            font-size: 1.4rem;
+        }
+
+        .orders-card {
+            padding: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="orders-container">
+    <h1 class="orders-title">Orders Managements</h1>
+    
+    <div class="orders-card">
+        <div class="orders-header">
+            <a href="{{ path('admin_dashboard') }}" class="home-btn">
+                <i class="fas fa-home"></i>
+            </a>
+            <input id="searchInput" type="text" placeholder="Search orders..." class="search-input">
+        </div>
+        
+        <div class="orders-table-wrapper">
+            <table id="ordersTable" class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>Postal Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commande in commandes %}
+                        <tr>
+                            <td>{{ commande.id }}</td>
+                            <td>{{ commande.fullName }}</td>
+                            <td>{{ commande.email }}</td>
+                            <td>{{ commande.phoneNumber }}</td>
+                            <td>{{ commande.address }}</td>
+                            <td>{{ commande.city }}</td>
+                            <td>{{ commande.postalCode }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-message">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="empty-message-icon">
+                                    <path d="M22 12H2"></path>
+                                    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                                    <line x1="6" y1="16" x2="6.01" y2="16"></line>
+                                    <line x1="10" y1="16" x2="10.01" y2="16"></line>
+                                </svg>
+                                No orders found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        let searchTerm = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#ordersTable tbody tr');
+
+        rows.forEach(function (row) {
+            let rowText = row.textContent.toLowerCase();
+            if (rowText.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,337 @@
+{% extends 'baseclient.html.twig' %}
+
+{% block body %}
+<div class="profile-container">
+    <div class="profile-card">
+        <h1 class="profile-title">My Profile</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {{ form_start(profileForm) }}
+            <div class="form-group">
+                {{ form_row(profileForm.firstName) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(profileForm.lastName) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(profileForm.phoneNumber) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(profileForm.country) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(profileForm.city) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(profileForm.address) }}
+            </div>
+
+            <button type="submit" class="btn-save">
+                Save Profile
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            </button>
+        {{ form_end(profileForm) }}
+
+        {% if profile %}
+            <div class="profile-info">
+                <h2>Profile Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">First Name:</span>
+                        <span class="info-value">{{ profile.firstName }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Last Name:</span>
+                        <span class="info-value">{{ profile.lastName }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Phone:</span>
+                        <span class="info-value">{{ profile.phoneNumber }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Country:</span>
+                        <span class="info-value">{{ profile.country }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">City:</span>
+                        <span class="info-value">{{ profile.city }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Address:</span>
+                        <span class="info-value">{{ profile.address }}</span>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.profile-container {
+    font-family: 'Inter', 'Segoe UI', Roboto, -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 1.5rem;
+    min-height: 100vh;
+    background-color: white;
+}
+
+.profile-card {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 600px;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(236, 106, 0, 0.1);
+}
+
+.profile-title {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-size: 2rem;
+    color: #1f2540;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid rgba(236, 106, 0, 0.79);
+}
+
+.profile-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: rgba(236, 106, 0, 0.79);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #1f2540;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #1f2540;
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: rgba(236, 106, 0, 0.5);
+    box-shadow: 0 0 0 3px rgba(236, 106, 0, 0.1);
+    background-color: #fff;
+}
+
+.btn-save {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, rgba(236, 106, 0, 0.89) 0%, rgba(255, 140, 0, 0.9) 100%);
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 15px rgba(236, 106, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    position: relative;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.btn-save:hover {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.9) 0%, rgba(236, 106, 0, 0.89) 100%);
+    box-shadow: 0 12px 20px rgba(236, 106, 0, 0.4);
+    transform: translateY(-3px);
+}
+
+.btn-save:active {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 10px rgba(236, 106, 0, 0.3);
+}
+
+.btn-save::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.btn-save:hover::after {
+    left: 100%;
+}
+
+.btn-icon {
+    transition: transform 0.3s ease;
+}
+
+.btn-save:hover .btn-icon {
+    transform: translateY(-2px);
+}
+
+.profile-info {
+    margin-top: 2.5rem;
+    background: #f8f9fa;
+    padding: 1.8rem;
+    border-radius: 10px;
+    border-left: 4px solid rgba(236, 106, 0, 0.79);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.profile-info h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    color: #1f2540;
+    font-weight: 600;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #1f2540;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.info-value {
+    color: #4a5568;
+    font-size: 1rem;
+    background: white;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #edf2f7;
+}
+
+.alert-success {
+    text-align: center;
+    padding: 1rem;
+    background-color: rgba(236, 106, 0, 0.1);
+    color: rgba(236, 106, 0, 0.89);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    border: 1px solid rgba(236, 106, 0, 0.3);
+    animation: fadeIn 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alert-success::before {
+    content: '✓';
+    display: inline-block;
+    margin-right: 0.5rem;
+    font-weight: bold;
+    background: rgba(236, 106, 0, 0.89);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 20px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 1.5rem;
+    }
+    
+    .profile-title {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .profile-card {
+        padding: 1.2rem;
+    }
+    
+    .profile-title {
+        font-size: 1.4rem;
+    }
+    
+    .profile-info {
+        padding: 1.2rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-group input,
+    .form-group select {
+        padding: 0.7rem 0.9rem;
+    }
+    
+    .btn-save {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
+}
+</style>
+{% endblock %}

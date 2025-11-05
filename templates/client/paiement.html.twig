@@ -1,0 +1,546 @@
+{% extends 'baseclient.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .payment-container {
+        max-width: 1000px;
+        margin: 3rem auto;
+        padding: 2.5rem;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .payment-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        font-size: 2rem;
+        color: #1f2540;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid rgba(236, 106, 0, 0.79);
+    }
+
+    .payment-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: rgba(236, 106, 0, 0.79);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .form-full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #1f2540;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: #1f2540;
+        background-color: #f8fafc;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: rgba(236, 106, 0, 0.5);
+        box-shadow: 0 0 0 3px rgba(236, 106, 0, 0.1);
+        background-color: #fff;
+    }
+
+    .form-error {
+        color: #e53e3e;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, rgba(236, 106, 0, 0.89) 0%, rgba(255, 140, 0, 0.9) 100%);
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 15px rgba(236, 106, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        position: relative;
+        overflow: hidden;
+        margin-top: 1.5rem;
+    }
+
+    .btn-submit:hover {
+        background: linear-gradient(135deg, rgba(255, 140, 0, 0.9) 0%, rgba(236, 106, 0, 0.89) 100%);
+        box-shadow: 0 12px 20px rgba(236, 106, 0, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .btn-submit:active {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(236, 106, 0, 0.3);
+    }
+
+    .btn-submit::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: 0.5s;
+    }
+
+    .btn-submit:hover::after {
+        left: 100%;
+    }
+
+    .btn-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-submit:hover .btn-icon {
+        transform: translateY(-2px);
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1f2540;
+        margin: 2rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    /* Payment Method Styles */
+    .payment-methods {
+        margin: 1rem;
+    }
+
+    .payment-method-option {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: #f8fafc;
+    }
+
+    .payment-method-option:hover {
+        border-color: rgba(236, 106, 0, 0.5);
+        background-color: #fff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .payment-method-option.selected {
+        border-color: rgba(236, 106, 0, 0.79);
+        background-color: rgba(236, 106, 0, 0.05);
+        box-shadow: 0 4px 8px rgba(236, 106, 0, 0.1);
+    }
+
+    .payment-method-radio {
+        margin-right: 1rem;
+        width: 20px;
+        height: 20px;
+        accent-color: rgba(236, 106, 0, 0.89);
+    }
+
+    .payment-method-details {
+        flex-grow: 1;
+    }
+
+    .payment-method-title {
+        font-weight: 600;
+        color: #1f2540;
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .payment-method-title i {
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .payment-method-description {
+        font-size: 0.9rem;
+        color: #4a5568;
+    }
+
+    .payment-method-logo {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .payment-method-logo img {
+        height: 24px;
+        width: auto;
+    }
+
+    .card-details {
+        background-color: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        border: 1px solid rgba(236, 106, 0, 0.3);
+        display: none;
+    }
+
+    .card-details.active {
+        display: block;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-row {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .card-icon {
+        font-size: 1.5rem;
+        color: rgba(236, 106, 0, 0.89);
+        margin-right: 0.5rem;
+    }
+
+    .secure-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1rem;
+        padding: 0.5rem;
+        background-color: #f8fafc;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+
+    .secure-badge i {
+        color: #48bb78;
+        margin-right: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .payment-container {
+            padding: 1.5rem;
+            margin: 1.5rem;
+        }
+
+        .payment-title {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .btn-submit {
+            font-size: 1rem;
+            padding: 0.8rem 1.5rem;
+        }
+
+        .card-row {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .payment-container {
+            padding: 1.2rem;
+            margin: 1rem;
+        }
+
+        .payment-title {
+            font-size: 1.4rem;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            padding: 0.7rem 0.9rem;
+        }
+
+        .payment-method-option {
+            padding: 0.8rem;
+        }
+
+        .payment-method-logo img {
+            height: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="payment-container">
+    <h1 class="payment-title">Complete Your Order</h1>
+
+    {{ form_start(form) }}
+    
+    <div class="section-title">
+        <i class="fas fa-user-circle"></i> Personal Information
+    </div>
+    
+    <div class="form-grid">
+        <div class="form-group">
+            {{ form_label(form.fullName) }}
+            {{ form_widget(form.fullName, {'attr': {'class': 'form-control', 'placeholder': 'Enter your full name'}}) }}
+            {% if form_errors(form.fullName) %}
+                <div class="form-error">{{ form_errors(form.fullName) }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.email) }}
+            {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Enter your email address'}}) }}
+            {% if form_errors(form.email) %}
+                <div class="form-error">{{ form_errors(form.email) }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group form-full-width">
+            {{ form_label(form.phoneNumber) }}
+            {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': 'Enter your phone number'}}) }}
+            {% if form_errors(form.phoneNumber) %}
+                <div class="form-error">{{ form_errors(form.phoneNumber) }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section-title">
+        <i class="fas fa-map-marker-alt"></i> Shipping Address
+    </div>
+    
+    <div class="form-grid">
+        <div class="form-group form-full-width">
+            {{ form_label(form.address) }}
+            {{ form_widget(form.address, {'attr': {'class': 'form-control', 'placeholder': 'Enter your street address'}}) }}
+            {% if form_errors(form.address) %}
+                <div class="form-error">{{ form_errors(form.address) }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.city) }}
+            {{ form_widget(form.city, {'attr': {'class': 'form-control', 'placeholder': 'Enter your city'}}) }}
+            {% if form_errors(form.city) %}
+                <div class="form-error">{{ form_errors(form.city) }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form_label(form.postalCode) }}
+            {{ form_widget(form.postalCode, {'attr': {'class': 'form-control', 'placeholder': 'Enter your postal code'}}) }}
+            {% if form_errors(form.postalCode) %}
+                <div class="form-error">{{ form_errors(form.postalCode) }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section-title">
+        <i class="fas fa-credit-card"></i> Payment Method
+    </div>
+    
+    <div class="payment-methods">
+        <div class="payment-method-option" data-method="credit-card">
+            <input type="radio" name="paymentMethod" value="credit-card" id="credit-card" class="payment-method-radio" checked>
+            <div class="payment-method-details">
+                <label for="credit-card" class="payment-method-title">
+                    <i class="fas fa-credit-card"></i> Credit / Debit Card
+                </label>
+                <div class="payment-method-description">Pay securely with your credit or debit card</div>
+            </div>
+            <div class="payment-method-logo">
+                <img src="{{ asset('images/visa.png') }}" alt="Visa">
+                <img src="{{ asset('images/mastercard.png') }}" alt="Mastercard">
+            </div>
+        </div>
+        
+        <div class="card-details active" id="credit-card-details">
+            <div class="form-group form-full-width">
+                <label for="card-number" class="form-label">Card Number</label>
+                <div style="position: relative;">
+                    <input type="text" id="card-number" class="form-control" placeholder="1234 5678 9012 3456">
+                    <i class="fas fa-credit-card" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #a0aec0;"></i>
+                </div>
+            </div>
+            
+            <div class="card-row">
+                <div class="form-group" style="flex: 1;">
+                    <label for="card-name" class="form-label">Cardholder Name</label>
+                    <input type="text" id="card-name" class="form-control" placeholder="Name on card">
+                </div>
+            </div>
+            
+            <div class="card-row">
+                <div class="form-group" style="flex: 1;">
+                    <label for="expiry-date" class="form-label">Expiry Date</label>
+                    <input type="text" id="expiry-date" class="form-control" placeholder="MM/YY">
+                </div>
+                
+                <div class="form-group" style="flex: 1;">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <div style="position: relative;">
+                        <input type="text" id="cvv" class="form-control" placeholder="123">
+                        <i class="fas fa-question-circle" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #a0aec0;" title="3-digit security code on the back of your card"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="secure-badge">
+                <i class="fas fa-lock"></i> Your payment information is secure and encrypted
+            </div>
+        </div>
+        
+        <div class="payment-method-option" data-method="paypal">
+            <input type="radio" name="paymentMethod" value="paypal" id="paypal" class="payment-method-radio">
+            <div class="payment-method-details">
+                <label for="paypal" class="payment-method-title">
+                    <i class="fab fa-paypal"></i> PayPal
+                </label>
+                <div class="payment-method-description">Pay with your PayPal account</div>
+            </div>
+            
+        </div>
+        
+        <div class="payment-method-option" data-method="cash">
+            <input type="radio" name="paymentMethod" value="cash" id="cash" class="payment-method-radio">
+            <div class="payment-method-details">
+                <label for="cash" class="payment-method-title">
+                    <i class="fas fa-money-bill-wave"></i> Cash on Delivery
+                </label>
+                <div class="payment-method-description">Pay when you receive your order</div>
+            </div>
+            <div class="payment-method-logo">
+                <i class="fas fa-truck-moving" style="font-size: 24px; color: #4a5568;"></i>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-submit">
+        <i class="fas fa-check-circle btn-icon"></i>
+        Complete Order
+    </button>
+
+    {{ form_end(form) }}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Payment method selection
+        const paymentOptions = document.querySelectorAll('.payment-method-option');
+        const cardDetails = document.getElementById('credit-card-details');
+        
+        paymentOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Update radio button
+                const radio = this.querySelector('.payment-method-radio');
+                radio.checked = true;
+                
+                // Update selected styling
+                paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // Show/hide card details
+                if (radio.value === 'credit-card') {
+                    cardDetails.classList.add('active');
+                } else {
+                    cardDetails.classList.remove('active');
+                }
+            });
+        });
+        
+        // Initialize the first option as selected
+        paymentOptions[0].classList.add('selected');
+        
+        // Format card number with spaces
+        const cardNumberInput = document.getElementById('card-number');
+        if (cardNumberInput) {
+            cardNumberInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = '';
+                
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) {
+                        formattedValue += ' ';
+                    }
+                    formattedValue += value[i];
+                }
+                
+                e.target.value = formattedValue.substring(0, 19); // Limit to 16 digits + 3 spaces
+            });
+        }
+        
+        // Format expiry date
+        const expiryInput = document.getElementById('expiry-date');
+        if (expiryInput) {
+            expiryInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                
+                e.target.value = value;
+            });
+        }
+        
+        // Limit CVV to 3 or 4 digits
+        const cvvInput = document.getElementById('cvv');
+        if (cvvInput) {
+            cvvInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+            });
+        }
+    });
+</script>
+{% endblock %}

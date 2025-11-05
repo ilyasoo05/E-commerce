@@ -1,0 +1,441 @@
+{% extends 'baseadmin.html.twig' %}
+
+{% block body %}
+<div class="admin-dashboard">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+    
+    <div class="stats-grid">
+        <div class="stat-card products-card">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Total Products</h3>
+                <p class="card-value">{{ totalProducts }}</p>
+                <div class="card-actions">
+                    <a href="{{ path('admin_addproduct') }}" class="btn btn-add-product">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Add Product
+                    </a>
+                    <a href="{{ path('admin_product') }}" class="btn btn-view-products">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        View Products
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card clients-card">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Total Clients</h3>
+                <p class="card-value">{{ totalClients }}</p>
+                <div class="card-actions">
+                    <a href="{{ path('admin_clients') }}" class="btn btn-primary clients-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        View Clients
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card orders-card">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Total Orders</h3>
+                <p class="card-value">{{ totalCommandes }}</p>
+                <div class="card-actions">
+                    <a href="{{ path('admin_orders') }}" class="btn btn-primary orders-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        View Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Comments card positioned below the stats grid -->
+    <div class="comments-section">
+        <div class="stat-card comments-card">
+            <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <div class="card-content">
+                <h3 class="card-title">Recent Comments</h3>
+                <p class="card-value">{{ totalComments }}</p>
+                
+                <!-- Recent comments list -->
+                <div class="recent-comments">
+                    {% if recentComments is defined and recentComments|length > 0 %}
+                        {% for comment in recentComments %}
+                            <div class="comment-item">
+                                <div class="comment-author">
+                                    <div class="author-avatar">
+                                        {{ comment.user.profile.firstName|slice(0, 1)|upper }}{{ comment.user.profile.lastName|slice(0, 1)|upper }}
+                                    </div>
+                                    <div class="author-name">{{ comment.user.profile.firstName }} {{ comment.user.profile.lastName }}</div>
+                                </div>
+                                <div class="comment-text">{{ comment.content }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-comments">No recent comments available</div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-actions">
+                    <a href="{{ path('admin_comments') }}" class="btn btn-primary comments-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        View Comments
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-dashboard {
+        max-width: 1405px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .dashboard-title {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        font-size: 2rem;
+        color: #1f2540;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid rgba(236, 106, 0, 0.79);
+    }
+
+    .dashboard-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: rgba(236, 106, 0, 0.79);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Comments section styling */
+    .comments-section {
+        margin-top: 2rem;
+    }
+
+    .comments-card {
+        width: 95.5%;
+    }
+
+    /* Recent comments styling */
+    .recent-comments {
+        margin: 0.5rem 0 1.5rem 0;
+    }
+
+    .comment-item {
+        padding: 1rem;
+        border-radius: 8px;
+        background-color: rgba(156, 39, 176, 0.05);
+        margin-bottom: 0.8rem;
+        transition: all 0.2s ease;
+    }
+
+    .comment-item:hover {
+        background-color: rgba(156, 39, 176, 0.1);
+    }
+
+    .comment-author {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .author-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #9c27b0;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.8rem;
+        margin-right: 0.8rem;
+    }
+
+    .author-name {
+        font-weight: 600;
+        color: #1f2540;
+    }
+
+    .comment-text {
+        color: #4a5568;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .no-comments {
+        text-align: center;
+        padding: 1rem;
+        color: #718096;
+        font-style: italic;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        border-top: 4px solid rgba(236, 106, 0, 0.79);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .products-card {
+        background: linear-gradient(to bottom right, #ffffff, #e8f4fd);
+        border-top-color: #0288d1;
+    }
+
+    .clients-card {
+        background: linear-gradient(to bottom right, #ffffff, #f1f8e9);
+        border-top-color: #7cb342;
+    }
+
+    .orders-card {
+        background: linear-gradient(to bottom right, #ffffff, #fff8e1);
+        border-top-color: #ffa000;
+    }
+
+    .comments-card {
+        background: linear-gradient(to bottom right, #ffffff, #f3e5f5);
+        border-top-color: #9c27b0;
+    }
+
+    .card-icon {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        opacity: 0.9;
+    }
+
+    .products-card .card-icon {
+        background: #0288d1;
+    }
+
+    .clients-card .card-icon {
+        background: #7cb342;
+    }
+
+    .orders-card .card-icon {
+        background: #ffa000;
+    }
+
+    .comments-card .card-icon {
+        background: #9c27b0;
+    }
+
+    .card-content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1f2540;
+        margin: 0 0 1rem 0;
+    }
+
+    .card-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1f2540;
+        margin: 0 0 1rem 0;
+    }
+
+    .card-actions {
+        margin-top: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.8rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        flex: 1;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, rgba(236, 106, 0, 0.89) 0%, rgba(255, 140, 0, 0.9) 100%);
+        color: white;
+    }
+
+    .btn-add-product {
+        background: #0288d1;
+        color: white;
+    }
+
+    .btn-view-products {
+        background: white;
+        color: #0288d1;
+        border: 1px solid #0288d1;
+    }
+
+    .clients-btn {
+        background: linear-gradient(135deg, #7cb342 0%, #8bc34a 100%);
+    }
+
+    .orders-btn {
+        background: linear-gradient(135deg, #ffa000 0%, #ffb74d 100%);
+    }
+
+    .comments-btn {
+        background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);
+    }
+
+    @media (max-width: 768px) {
+        .admin-dashboard {
+            padding: 0 1rem;
+            margin: 1.5rem auto;
+        }
+
+        .dashboard-title {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .comments-section {
+            margin-top: 1.5rem;
+        }
+
+        .comment-item {
+            padding: 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .admin-dashboard {
+            padding: 0 0.8rem;
+            margin: 1rem auto;
+        }
+
+        .dashboard-title {
+            font-size: 1.4rem;
+        }
+
+        .stats-grid {
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1.2rem;
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+        }
+
+        .card-actions {
+            flex-direction: column;
+        }
+        
+        .comments-section {
+            margin-top: 1rem;
+        }
+
+        .author-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 0.7rem;
+        }
+
+        .comment-text {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}

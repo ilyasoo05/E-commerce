@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Online Shop{% endblock %}</title>
+{% block stylesheets %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: rgba(236, 106, 0, 0.89);
+            --primary-light: rgba(236, 106, 0, 0.1);
+            --primary-hover: rgba(255, 140, 0, 0.9);
+            --text-dark: #1f2540;
+            --text-light: #4a5568;
+            --bg-light:rgb(255, 255, 255);
+            --white: #ffffff;
+            --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --border-radius: 10px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Inter', 'Segoe UI', Roboto, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* Header & Navigation */
+        .header {
+            background-color: var(--white);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.5rem;
+            position: relative;
+        }
+
+        .logo {
+            margin-left: -310px;
+        }
+
+        .logo img {
+            width: 60px;
+            height: auto;
+            transition: var(--transition);
+        }
+
+        .logo img:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-dark);
+            font-weight: 600;
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropbtn:hover {
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--white);
+            min-width: 200px;
+            box-shadow: var(--shadow-md);
+            z-index: 1;
+            border-radius: var(--border-radius);
+            top: 100%;
+            left: 0;
+            padding: 0.5rem 0;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .dropdown-content a {
+            color: var(--text-dark);
+            padding: 0.8rem 1.2rem;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .dropdown:hover .dropbtn {
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+        }
+
+        .dropdown .fa-caret-down {
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown:hover .fa-caret-down {
+            transform: rotate(180deg);
+        }
+
+        /* User Actions */
+        .user-actions {
+            display: flex;
+            align-items: center;
+            margin-left: 1490px;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            color: var(--primary-color);
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .cart-btn {
+            color: var(--text-dark);
+            position: relative;
+        }
+
+        .cart-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .profile-btn {
+            color: var(--text-dark);
+        }
+
+        .profile-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .logout-btn {
+            color: #ff5252;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 82, 82, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .divider {
+            height: 40px;
+            width: 2px;
+            background-color: #e2e8f0;
+            margin: 0 0.5rem;
+        }
+
+        .cart-bounce {
+            animation: bounce 0.3s ease;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        #cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.15rem 0.4rem;
+            border-radius: 50%;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .nav-links-container {
+                position: static;
+                transform: none;
+                left: auto;
+                width: 100%;
+                order: 3;
+                margin-top: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1rem;
+                box-shadow: var(--shadow-md);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-link, .dropbtn {
+                padding: 1rem;
+                width: 100%;
+                text-align: left;
+            }
+
+            .dropdown {
+                width: 100%;
+            }
+
+            .dropdown-content {
+                position: static;
+                box-shadow: none;
+                padding-left: 1rem;
+                display: none;
+                opacity: 1;
+                transform: none;
+                min-width: 100%;
+            }
+
+            .dropdown.active .dropdown-content {
+                display: block;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+                order: 2;
+            }
+
+            .user-actions {
+                order: 4;
+                margin-left: auto;
+            }
+
+            .logo {
+                order: 1;
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0.8rem 1rem;
+            }
+
+            .logo img {
+                width: 60px;
+            }
+
+            .action-btn, .logout-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 0.6rem 0.8rem;
+            }
+
+            .logo img {
+                width: 50px;
+            }
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+{% endblock %}
+</head>
+
+<body>
+    <header class="header">
+        <div class="nav-container">
+            <a href="{{ path('client_dashboard') }}" class="logo">
+                <img src="{{ asset('images/Logo.png') }}" alt="Logo">
+            </a>
+            <button class="mobile-menu-btn" id="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links-container">
+                <div class="nav-links" id="nav-links">
+                    <a href="{{ path('client_dashboard') }}" class="nav-link {% if app.request.get('_route') == 'client_dashboard' %}active{% endif %}">Dashboard</a>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            Electronics <i class="fas fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="{{ path('category_products', {'name': 'Electronics_Computers'}) }}">Computers</a>
+                            <a href="{{ path('category_products', {'name': 'Electronics_Mobile'}) }}">Mobile</a>
+                            <a href="{{ path('category_products', {'name': 'Electronics_TV'}) }}">TV</a>
+                            <a href="{{ path('category_products', {'name': 'Electronics_Cameras'}) }}">Cameras</a>
+                            <a href="{{ path('category_products', {'name': 'Electronics_Gaming'}) }}">Gaming</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            Clothes <i class="fas fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="{{ path('category_products', {'name': 'Clothes_Shirts'}) }}">Shirts</a>
+                            <a href="{{ path('category_products', {'name': 'Clothes_Pants'}) }}">Pants</a>
+                            <a href="{{ path('category_products', {'name': 'Clothes_Jackets'}) }}">Jackets</a>
+                            <a href="{{ path('category_products', {'name': 'Clothes_Shoes'}) }}">Shoes</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            Accessories <i class="fas fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="{{ path('category_products', {'name': 'Accessories_Bags'}) }}">Bags</a>
+                            <a href="{{ path('category_products', {'name': 'Accessories_Watches'}) }}">Watches</a>
+                            <a href="{{ path('category_products', {'name': 'Accessories_Hats'}) }}">Hats</a>
+                            <a href="{{ path('category_products', {'name': 'Accessories_Jewelry'}) }}">Jewelry</a>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">
+                            Books <i class="fas fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="{{ path('category_products', {'name': 'Books_Science'}) }}">Science</a>
+                            <a href="{{ path('category_products', {'name': 'Books_Fantasy'}) }}">Fantasy</a>
+                            <a href="{{ path('category_products', {'name': 'Books_Historical'}) }}">Historical</a>
+                            <a href="{{ path('category_products', {'name': 'Books_Horror'}) }}">Horror</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-actions">
+                <a href="{{ path('profile_page') }}" class="action-btn profile-btn" title="My Profile">
+                    <i class="fas fa-user"></i>
+                </a>
+                <a href="{{ path('cart_page') }}" class="action-btn cart-btn" id="cart-icon" title="Shopping Cart"> 
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count">0</span>
+                </a>
+                <a href="{{ path('client_comments') }}" class="action-btn comments-btn" title="Commentaires">
+                    <i class="fas fa-comments"></i>
+                </a>
+                <div class="divider"></div>
+                <form action="{{ path('app_logout') }}" method="post">
+                    <button type="submit" class="logout-btn" title="Logout">
+                        <i class="fas fa-door-open"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <main class="main-content">
+        {% block body %}{% endblock %}
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cart count update
+            const cartCount = document.getElementById('cart-count');
+            const cartIcon = document.getElementById('cart-icon');
+            function updateCartCount() {
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                let totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+                if (totalQty > 0) {
+                    cartCount.style.display = 'inline-block';
+                    cartCount.textContent = totalQty;
+                    // Add animation
+                    cartIcon.classList.add('cart-bounce');
+                    setTimeout(() => cartIcon.classList.remove('cart-bounce'), 300);
+                } else {
+                    cartCount.style.display = 'none';
+                }
+            }
+            updateCartCount();
+            window.addEventListener('storage', updateCartCount);
+            window.refreshCartCount = updateCartCount;
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+            const navLinks = document.getElementById('nav-links');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                    const isOpen = navLinks.classList.contains('active');
+                    mobileMenuBtn.innerHTML = isOpen ? 
+                        '<i class="fas fa-times"></i>' : 
+                        '<i class="fas fa-bars"></i>';
+                });
+            }
+            // Mobile dropdown toggle
+            const dropdowns = document.querySelectorAll('.dropdown');
+            if (window.innerWidth <= 992) {
+                dropdowns.forEach(dropdown => {
+                    const dropbtn = dropdown.querySelector('.dropbtn');
+                    dropbtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        dropdown.classList.toggle('active');
+                        // Close other dropdowns
+                        dropdowns.forEach(other => {
+                            if (other !== dropdown) {
+                                other.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+            }
+        });
+        function showToast(message, duration = 3000) {
+            // Remove any existing toasts
+            const existingToasts = document.querySelectorAll('.toast-notification');
+            existingToasts.forEach(toast => toast.remove());
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+    </script>
+</body>
+</html>
